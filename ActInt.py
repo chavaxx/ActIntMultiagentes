@@ -44,6 +44,7 @@ class Robot(Agent):
 		self.pos = pos
 		self.condition = self.WITHOUT_BOX
 	def step(self):
+		self.model.totalSteps = self.model.totalSteps + 1
 		if self.condition == self.WITHOUT_BOX:
 			next_moves = self.model.grid.get_neighborhood(self.pos, moore=False)
 			next_move = self.random.choice(next_moves)
@@ -72,10 +73,16 @@ class Robot(Agent):
 					self.condition=self.WITHOUT_BOX
 					self.model.schedule.add(newBox)
 					isShelf.STATE = isShelf.STATE + 1
+					self.model.boxesInPosition = self.model.boxesInPosition + 1
 			else:
 				self.model.grid.move_agent(self, next_move)
 
 class Amazon(Model):
+	totalSteps = 0
+	maxSteps = 500
+	currentSteps = 0
+	boxNumber = 20
+	boxesInPosition = 0
 	def __init__(self):
 		super().__init__()
 		self.schedule = RandomActivation(self)
@@ -110,7 +117,7 @@ class Amazon(Model):
 			self.grid.place_agent(robot, robot.pos)
 			self.schedule.add(robot)
 
-		for _ in range(15):
+		for _ in range(self.boxNumber):
 			x, y = randint(0, WIDTH-1), randint(0, HEIGHT-1)
 			while self.grid.is_cell_empty((x,y)) == False:
 				x, y = randint(0, WIDTH-1), randint(0, HEIGHT-1)
@@ -120,4 +127,12 @@ class Amazon(Model):
 
 	
 	def step(self):
-		self.schedule.step()
+		if self.currentSteps<=self.maxSteps and self.boxesInPosition<self.boxNumber:
+			self.schedule.step()
+			print("total de pasos realizados por todos los agentes: ")
+			print(self.totalSteps)
+			print("numero de cajas que faltan ordenar: ")
+			print(self.boxNumber - self.boxesInPosition)
+			print("pasos de simulacion restantes: ")
+			print(self.maxSteps - self.currentSteps)
+			self.currentSteps = self.currentSteps + 1
