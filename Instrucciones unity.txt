@@ -1,0 +1,5 @@
+1. abrir unity
+2.arrastrar el paquete Almacen.unitypackage a Assets.
+3. colocar en la escena en la posición x= 5, y=2, z=5.
+4. antes de dar click en el boton de play es necesario que ya este corriendo la api.py en alguna terminal
+5. presionar el boton play.  
